@@ -81,22 +81,20 @@ window.addEventListener('DOMContentLoaded', () => {
 const radToDeg = r => r * 180 / Math.PI;
 
 const findWinner = () => {
-    const data = chart.series[0].data;
-    const winThreshold = 360 - 360 / data.length;
+    const data = chart.series[0].data,
+        winThreshold = 360 - 360 / data.length;
     let startAngle;
 
     for (let i in data) {
-        startAngle = radToDeg(chart.series[0].data[i].shapeArgs.start) + 90;
+        startAngle = radToDeg(data[i].shapeArgs.start) + 90;
         if (startAngle > 360) {
             startAngle -= 360;
         }
         if (startAngle > winThreshold) {
 
-            console.log({
-                name: data[i].name,
-                threshold: winThreshold,
-                angle: startAngle
-            });
+            console.log(
+                'The lucky winner is ' + data[i].name + '!!!!'
+            );
         }
     }
 }
