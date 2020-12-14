@@ -1,23 +1,46 @@
 let chart;
 
+let physics = {
+    force: 0,
+	angleVel: 0,
+	strength: 0.006,
+	drag: 0.98,
+	targ: 0,
+};
+
 window.addEventListener('DOMContentLoaded', () => {
     document.getElementById('play').addEventListener('click', e => {
         // How many degrees to spin for each iteration
         let diff = 25 + Math.random() * 10;
-        let startAngle = chart.series[0].options.startAngle;
+        let startAngle = chart.series[0].options.startAngle,
+            physicsTakesOver = false;
 
         let t = setInterval(() => {
+            if (!physicsTakesOver) {
 
-            startAngle += diff;
-            if (startAngle > 360) {
-                startAngle -= 360;
-            }
-            diff *= 0.98;
-            chart.series[0].update({ startAngle });
-
-            if (diff < 0.1) {
-                clearInterval(t);
+                startAngle += diff;
+                if (startAngle > 360) {
+                    startAngle -= 360;
+                }
+                diff *= 0.98;
+                chart.series[0].update({ startAngle });
+                
+                if (diff < 0.2) {
+                 //   clearInterval(t);
+                 physicsTakesOver = true;
+                 physics.targ = startAngle;
+                 physics.angleVel = 0.2 * 0.98;
+                 physics.angle = startAngle;
+                }
+            } else {    // spring physics
+                physics.force = physics.targ - physics.angle; 
+                physics.force *= physics.strength;
+                physics.angleVel *= physics.drag;
+                physics.angleVel += physics.force;
+                physics.angle += physics.angleVel;
+                chart.series[0].update({ startAngle: physics.angle });
                 findWinner();
+             
             }
         }, 25);
     });
