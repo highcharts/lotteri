@@ -8,7 +8,9 @@ let intenseSentences = [    // Randomly display one during physics activation.
 ];
 
 window.addEventListener('DOMContentLoaded', () => {
-    document.getElementById('play').addEventListener('click', e => {
+    const button = document.getElementById('play');
+    button.addEventListener('click', e => {
+        button.disabled = true;
         const intenseSentence = intenseSentences[
             Math.floor(Math.random()* intenseSentences.length)
         ];
@@ -69,6 +71,7 @@ window.addEventListener('DOMContentLoaded', () => {
                     physics.angle = 0;
                     findWinner();
                     clearInterval(t);
+                    button.disabled = false;
                 }
             }
         }, 25);
@@ -101,6 +104,7 @@ window.addEventListener('DOMContentLoaded', () => {
             },
 
             complete: function (options) {
+                button.disabled = false;
                 options.series[0].data = options.series[0].data.filter(d => {
                     return d[1] !== null;
                 });
