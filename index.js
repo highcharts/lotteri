@@ -1,22 +1,39 @@
 let chart;
-
-let physics = {
-    force: 0,
-	angleVel: 0,
-	strength: 0.006,
-	drag: 0.98,
-	targ: 0,
-};
+let intenseSentences = [    // Randomly display one during physics activation.
+    'Oi, dette blir spennende...',
+    'Nå skjer det...',
+    'Tror du at du vinner?',
+    'Not Gryffindor...',
+    'Me...me...me...'
+];
 
 window.addEventListener('DOMContentLoaded', () => {
     document.getElementById('play').addEventListener('click', e => {
+        const intenseSentence = intenseSentences[
+            Math.floor(Math.random()* intenseSentences.length)
+        ];
+
+        chart.setTitle( {
+            text:  'Vi er i gang'
+        });
+
+        // Tweakable variables might be customized by the user in future update
+        let physics = {
+            force: 0,
+            angleVel: 0,
+            strength: 0.003, // tweakable
+            drag: 0.98,     // tweakable
+            threshold: 2,   // tweakable
+            targ: 0,
+            isActive: false
+        };
+
         // How many degrees to spin for each iteration
-        let diff = 25 + Math.random() * 10;
-        let startAngle = chart.series[0].options.startAngle,
-            physicsTakesOver = false;
+        let diff = 25 + Math.random() * 10,
+            startAngle = chart.series[0].options.startAngle;
 
         let t = setInterval(() => {
-            if (!physicsTakesOver) {
+            if (!physics.isActive) {
 
                 startAngle += diff;
                 if (startAngle > 360) {
@@ -24,23 +41,35 @@ window.addEventListener('DOMContentLoaded', () => {
                 }
                 diff *= 0.98;
                 chart.series[0].update({ startAngle });
-                
-                if (diff < 0.2) {
-                 //   clearInterval(t);
-                 physicsTakesOver = true;
-                 physics.targ = startAngle;
-                 physics.angleVel = 0.2 * 0.98;
-                 physics.angle = startAngle;
+
+                if (diff < physics.threshold) {
+                    physics.isActive = true;
+                    physics.targ = startAngle;
+                    physics.angleVel = physics.threshold * 0.98;
+                    physics.angle = startAngle;
                 }
             } else {    // spring physics
-                physics.force = physics.targ - physics.angle; 
+                physics.force = physics.targ - physics.angle;
                 physics.force *= physics.strength;
                 physics.angleVel *= physics.drag;
                 physics.angleVel += physics.force;
                 physics.angle += physics.angleVel;
+                chart.setTitle( {
+                    text:  intenseSentence
+                });
                 chart.series[0].update({ startAngle: physics.angle });
-                findWinner();
-             
+
+                if (    // Comming to a stop (approximate, but subtle)
+                    physics.angleVel < 0.001 &&
+                    physics.angleVel > -0.001 &&
+                    (physics.targ - physics.angle) < 0.018 &&
+                    (physics.targ - physics.angle) > -0.018
+                ) {
+                    physics.targ = physics.angle;
+                    physics.angle = 0;
+                    findWinner();
+                    clearInterval(t);
+                }
             }
         }, 25);
     });
@@ -114,10 +143,9 @@ const findWinner = () => {
             startAngle -= 360;
         }
         if (startAngle > winThreshold) {
-
-            console.log(
-                'The lucky winner is ' + data[i].name + '!!!!'
-            );
+            chart.setTitle( {
+                text:  'Den heldige er ' + data[i].name + '!!!'
+            });
         }
     }
 }
