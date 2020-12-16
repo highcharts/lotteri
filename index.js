@@ -8,7 +8,11 @@ let intenseSentences = [    // Randomly display one during physics activation.
 ];
 
 window.addEventListener('DOMContentLoaded', () => {
-    const button = document.getElementById('play');
+    const strengthSlider = document.getElementById('strength'),
+        dragSlider = document.getElementById('drag'),
+        lengthSlider = document.getElementById('length'),
+        button = document.getElementById('play');
+
     button.addEventListener('click', e => {
         button.disabled = true;
         const intenseSentence = intenseSentences[
@@ -19,13 +23,13 @@ window.addEventListener('DOMContentLoaded', () => {
             text:  'Vi er i gang'
         });
 
-        // Tweakable variables might be customized by the user in future update
+        // Physics with threee customizable variables that change behaviour.
         let physics = {
             force: 0,
             angleVel: 0,
-            strength: 0.003, // tweakable
-            drag: 0.98,     // tweakable
-            threshold: 2,   // tweakable
+            strength: 0.003 + strengthSlider.value / 10000, // tweakable
+            drag: 0.98 + dragSlider.value / 1000,     // tweakable
+            threshold: 2 + lengthSlider.value / 10,   // tweakable
             targ: 0,
             isActive: false
         };
@@ -50,7 +54,7 @@ window.addEventListener('DOMContentLoaded', () => {
                     physics.angleVel = physics.threshold * 0.98;
                     physics.angle = startAngle;
                 }
-            } else {    // spring physics
+            } else { // spring physics
                 physics.force = physics.targ - physics.angle;
                 physics.force *= physics.strength;
                 physics.angleVel *= physics.drag;
@@ -61,7 +65,7 @@ window.addEventListener('DOMContentLoaded', () => {
                 });
                 chart.series[0].update({ startAngle: physics.angle });
 
-                if (    // Comming to a stop (approximate, but subtle)
+                if ( // Comming to a stop (approximate, but subtle)
                     physics.angleVel < 0.001 &&
                     physics.angleVel > -0.001 &&
                     (physics.targ - physics.angle) < 0.018 &&
