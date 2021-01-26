@@ -1,0 +1,10 @@
+.side {
+    margin-left: 40%;
+}
+
+#container {
+    min-width: 310px;
+    max-width: 600px;
+    height: 400px;
+    margin: 0 auto;
+}

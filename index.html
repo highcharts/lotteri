@@ -1,30 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
 <script src="https://code.highcharts.com/highcharts.js"></script>
 <script src="https://code.highcharts.com/modules/data.js"></script>
 <script src="index.js"></script>
 
-<style>
-    #container {
-        min-width: 310px;
-        max-width: 600px;
-        height: 400px;
-        margin: 0 auto;
-    }
-</style>
 
 <div id="container"></div>
 
 <button id="play" disabled>
 Snurr
 </button>
-<div>
-    <input type="range" min="-20" max="20" value="0" id="strength">
-    <label for="strength">spring-strength</label>
+<div class='side'>
+    <div class='btn-inline'>
+        <input type="range" min="-20" max="20" value="0" id="strength">
+        <label for="strength">spring-strength</label>
+    </div>
+    <div class='btn-inline'>
+        <input type="range" min="0" max="50" value="0" id="length">
+        <label for="length">spring-length</label>
+    </div>
+    <div class='btn-inline'>
+        <input type="range" min="-10" max="10" value="0" id="drag">
+        <label for="drag">oil</label>
+    </div>
+    <div class='btn-inline'>
+        <input type="range" min="-25" max="-2" value="25" id="hurry">
+        <label for="hurry">We need to hurry this thing up</label>
+    </div>
 </div>
-<div>
-    <input type="range" min="0" max="50" value="0" id="length">
-    <label for="length">spring-length</label>
-</div>
-<div>
-    <input type="range" min="-10" max="10" value="0" id="drag">
-    <label for="drag">oil</label>
-</div>
+</body>

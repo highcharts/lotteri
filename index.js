@@ -7,10 +7,13 @@ let intenseSentences = [    // Randomly display one during physics activation.
     'Me...me...me...'
 ];
 
+let winner = -1;
+
 window.addEventListener('DOMContentLoaded', () => {
     const strengthSlider = document.getElementById('strength'),
         dragSlider = document.getElementById('drag'),
         lengthSlider = document.getElementById('length'),
+        hurrySlider = document.getElementById('hurry');
         button = document.getElementById('play');
 
     button.addEventListener('click', e => {
@@ -23,7 +26,7 @@ window.addEventListener('DOMContentLoaded', () => {
             text:  'Vi er i gang'
         });
 
-        // Physics with threee customizable variables that change behaviour.
+        // Physics with three customizable variables that change behaviour.
         let physics = {
             force: 0,
             angleVel: 0,
@@ -33,6 +36,8 @@ window.addEventListener('DOMContentLoaded', () => {
             targ: 0,
             isActive: false
         };
+
+        const hurry = Math.sqrt(Math.pow(hurrySlider.value, 2));
 
         // How many degrees to spin for each iteration
         let diff = 25 + Math.random() * 10,
@@ -53,6 +58,9 @@ window.addEventListener('DOMContentLoaded', () => {
                     physics.targ = startAngle;
                     physics.angleVel = physics.threshold * 0.98;
                     physics.angle = startAngle;
+                    chart.setTitle( {
+                        text: intenseSentence
+                    });
                 }
             } else { // spring physics
                 physics.force = physics.targ - physics.angle;
@@ -60,12 +68,10 @@ window.addEventListener('DOMContentLoaded', () => {
                 physics.angleVel *= physics.drag;
                 physics.angleVel += physics.force;
                 physics.angle += physics.angleVel;
-                chart.setTitle( {
-                    text:  intenseSentence
-                });
+
                 chart.series[0].update({ startAngle: physics.angle });
 
-                if ( // Comming to a stop (approximate, but subtle)
+                if ( // Coming to a stop (approximate, but subtle)
                     physics.angleVel < 0.001 &&
                     physics.angleVel > -0.001 &&
                     (physics.targ - physics.angle) < 0.018 &&
@@ -73,12 +79,12 @@ window.addEventListener('DOMContentLoaded', () => {
                 ) {
                     physics.targ = physics.angle;
                     physics.angle = 0;
-                    findWinner();
-                    clearInterval(t);
+                    winner = findWinner();
                     button.disabled = false;
+                    clearInterval(t);
                 }
             }
-        }, 25);
+        }, hurry);
     });
     // Create the chart
     chart = Highcharts.chart('container', {
@@ -154,6 +160,8 @@ const findWinner = () => {
             chart.setTitle( {
                 text:  'Den heldige er ' + data[i].name + '!!!'
             });
+            return i;
         }
     }
+    return -1;
 }
