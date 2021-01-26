@@ -13,7 +13,7 @@ window.addEventListener('DOMContentLoaded', () => {
     const strengthSlider = document.getElementById('strength'),
         dragSlider = document.getElementById('drag'),
         lengthSlider = document.getElementById('length'),
-        hurrySlider = document.getElementById('hurry');
+        hurrySlider = document.getElementById('hurry'),
         button = document.getElementById('play');
 
     button.addEventListener('click', e => {
