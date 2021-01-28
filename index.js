@@ -40,7 +40,7 @@ window.addEventListener('DOMContentLoaded', () => {
         const hurry = Math.sqrt(Math.pow(hurrySlider.value, 2));
 
         // How many degrees to spin for each iteration
-        let diff = 25 + Math.random() * 10,
+        let diff = 25 + Math.random() * 50,
             startAngle = chart.series[0].options.startAngle;
 
         let t = setInterval(() => {
@@ -50,13 +50,13 @@ window.addEventListener('DOMContentLoaded', () => {
                 if (startAngle > 360) {
                     startAngle -= 360;
                 }
-                diff *= 0.98;
+                diff *= 0.99;
                 chart.series[0].update({ startAngle });
 
                 if (diff < physics.threshold) {
                     physics.isActive = true;
                     physics.targ = startAngle;
-                    physics.angleVel = physics.threshold * 0.98;
+                    physics.angleVel = physics.threshold * 0.99;
                     physics.angle = startAngle;
                     chart.setTitle( {
                         text: intenseSentence
