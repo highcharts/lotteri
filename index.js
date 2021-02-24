@@ -7,16 +7,18 @@ let intenseSentences = [    // Randomly display one during physics activation.
     'Me...me...me...'
 ];
 
-let winner = -1;
-
 window.addEventListener('DOMContentLoaded', () => {
     const strengthSlider = document.getElementById('strength'),
         dragSlider = document.getElementById('drag'),
         lengthSlider = document.getElementById('length'),
         hurrySlider = document.getElementById('hurry'),
         button = document.getElementById('play');
+    let t;
 
     button.addEventListener('click', e => {
+        if (t) {
+            clearInterval(t);
+        }
         button.disabled = true;
         const intenseSentence = intenseSentences[
             Math.floor(Math.random()* intenseSentences.length)
@@ -30,6 +32,8 @@ window.addEventListener('DOMContentLoaded', () => {
         let physics = {
             force: 0,
             angleVel: 0,
+            angle: 0,
+            prevAngle: 0,  // only used to calculate winner
             strength: 0.003 + strengthSlider.value / 10000, // tweakable
             drag: 0.98 + dragSlider.value / 1000,     // tweakable
             threshold: 2 + lengthSlider.value / 10,   // tweakable
@@ -37,13 +41,17 @@ window.addEventListener('DOMContentLoaded', () => {
             isActive: false
         };
 
+        // the current winner at which the wheel changes direction.
+        let currentWinner = -1,
+            foundPossibleWinner = false;
+
         const hurry = Math.sqrt(Math.pow(hurrySlider.value, 2));
 
         // How many degrees to spin for each iteration
         let diff = 25 + Math.random() * 50,
             startAngle = chart.series[0].options.startAngle;
 
-        let t = setInterval(() => {
+        t = setInterval(() => {
             if (!physics.isActive) {
 
                 startAngle += diff;
@@ -63,25 +71,43 @@ window.addEventListener('DOMContentLoaded', () => {
                     });
                 }
             } else { // spring physics
+                physics.prevAngle = physics.angle;
                 physics.force = physics.targ - physics.angle;
                 physics.force *= physics.strength;
                 physics.angleVel *= physics.drag;
                 physics.angleVel += physics.force;
                 physics.angle += physics.angleVel;
-
                 chart.series[0].update({ startAngle: physics.angle });
 
-                if ( // Coming to a stop (approximate, but subtle)
-                    physics.angleVel < 0.001 &&
-                    physics.angleVel > -0.001 &&
-                    (physics.targ - physics.angle) < 0.018 &&
-                    (physics.targ - physics.angle) > -0.018
+                /*
+                    Sometimes it's obvious when an item is about to win.
+                    Instead of waiting for the wheel to come to a complete stop
+                    we can calculate this earlier.
+
+                    Once the wheel changes direction we select a temporary
+                    winner. When the wheel changes direction a second time,
+                    we check whether the temporary winner got
+                    selected again. This MUST happen consecutively.
+                */
+                if (physics.prevAngle >= physics.angle && currentWinner < 0) {
+                    currentWinner = findWinner(chart.series[0].data);
+                    foundPossibleWinner = true;
+                } else if (
+                    physics.prevAngle <= physics.angle &&
+                    foundPossibleWinner
                 ) {
-                    physics.targ = physics.angle;
-                    physics.angle = 0;
-                    winner = findWinner();
-                    button.disabled = false;
-                    clearInterval(t);
+                    const nextWinner = findWinner(chart.series[0].data);
+                    if (currentWinner == nextWinner) {
+                        chart.setTitle( {
+                            text:  'The winner is ' +
+                                chart.series[0].data[currentWinner].name + '!'
+                        });
+                        foundPossibleWinner = false;
+                        button.disabled = false;
+                    } else {
+                        currentWinner = -1;
+                        foundPossibleWinner = false;
+                    }
                 }
             }
         }, hurry);
@@ -146,9 +172,8 @@ window.addEventListener('DOMContentLoaded', () => {
 
 const radToDeg = r => r * 180 / Math.PI;
 
-const findWinner = () => {
-    const data = chart.series[0].data,
-        winThreshold = 360 - 360 / data.length;
+const findWinner = data => {
+    const winThreshold = 360 - 360 / data.length;
     let startAngle;
 
     for (let i in data) {
@@ -157,9 +182,6 @@ const findWinner = () => {
             startAngle -= 360;
         }
         if (startAngle > winThreshold) {
-            chart.setTitle( {
-                text:  'Den heldige er ' + data[i].name + '!!!'
-            });
             return i;
         }
     }
