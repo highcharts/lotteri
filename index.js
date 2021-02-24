@@ -1,3 +1,7 @@
+Highcharts.setOptions({
+    colors: ['#D3F898', '#BDC8F9', '#F694C1', '#EDE7B1', '#A9DEF9']
+});
+
 let chart;
 let intenseSentences = [    // Randomly display one during physics activation.
     'Oi, dette blir spennende...',

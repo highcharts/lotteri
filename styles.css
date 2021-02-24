@@ -1,10 +1,18 @@
-.side {
-    margin-left: 40%;
-}
+.controls {
+    display: flex;
+    flex-direction: column;
+    max-width: 600px;
+    margin: 0 auto;
+  }
 
-#container {
+  button {
+      width: 40%;
+      margin: 0 auto;
+  }
+
+  #container {
     min-width: 310px;
     max-width: 600px;
     height: 400px;
     margin: 0 auto;
-}
+  }
