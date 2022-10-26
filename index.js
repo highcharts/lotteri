@@ -129,7 +129,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
         data: {
             googleAPIKey: 'AIzaSyDbC5TzX2ZO7jMMGv-BkrhP2nZasvfPF5c',
-            googleSpreadsheetKey: '1jwQptUEL1o23PZrET81PUIIAIS6H9eSL88rQhuQ2eXs',
+            googleSpreadsheetKey: '1X28Qn7gLj5ZyMQECJVVYU8edqDCoEs8byKwLP6i_wMI',
             error: console.error,
             parsed: function (columns) {
                 const activeColumn = columns.findIndex(column => column[0] === 'aktiv');
