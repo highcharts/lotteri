@@ -128,7 +128,7 @@ window.addEventListener('DOMContentLoaded', () => {
         },
 
         data: {
-            googleAPIKey: 'AIzaSyAy4F5nyfepQCRFfr_JqxJBo01NeIR7i5U',
+            googleAPIKey: 'AIzaSyDbC5TzX2ZO7jMMGv-BkrhP2nZasvfPF5c',
             googleSpreadsheetKey: '1jwQptUEL1o23PZrET81PUIIAIS6H9eSL88rQhuQ2eXs',
             error: console.error,
             parsed: function (columns) {
