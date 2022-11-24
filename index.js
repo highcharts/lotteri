@@ -16,14 +16,15 @@ window.addEventListener('DOMContentLoaded', () => {
         dragSlider = document.getElementById('drag'),
         lengthSlider = document.getElementById('length'),
         hurrySlider = document.getElementById('hurry'),
-        button = document.getElementById('play');
+        playButton = document.getElementById('play'),
+        randomizerButton = document.getElementById('randomize');
     let t;
 
-    button.addEventListener('click', e => {
+    playButton.addEventListener('click', e => {
         if (t) {
             clearInterval(t);
         }
-        button.disabled = true;
+        playButton.disabled = true;
         const intenseSentence = intenseSentences[
             Math.floor(Math.random()* intenseSentences.length)
         ];
@@ -107,7 +108,7 @@ window.addEventListener('DOMContentLoaded', () => {
                                 chart.series[0].data[currentWinner].name + '!'
                         });
                         foundPossibleWinner = false;
-                        button.disabled = false;
+                        playButton.disabled = false;
                     } else {
                         currentWinner = -1;
                         foundPossibleWinner = false;
@@ -115,6 +116,12 @@ window.addEventListener('DOMContentLoaded', () => {
                 }
             }
         }, hurry);
+    });
+
+    randomizerButton.addEventListener('click', e => {
+        strengthSlider.value = Math.floor(Math.random() * 40) - 20,
+        dragSlider.value = Math.floor(Math.random() * 20) - 10,
+        lengthSlider.value = Math.floor(Math.random() * 50);
     });
     // Create the chart
     chart = Highcharts.chart('container', {
@@ -146,7 +153,7 @@ window.addEventListener('DOMContentLoaded', () => {
             },
 
             complete: function (options) {
-                button.disabled = false;
+                playButton.disabled = false;
                 options.series[0].data = options.series[0].data.filter(d => {
                     return d[1] !== null;
                 });
